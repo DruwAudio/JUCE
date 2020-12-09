@@ -221,12 +221,23 @@ public:
         return ValueTree (*newObject);
     }
 
-    ValueTree getChildWithProperty (const Identifier& propertyName, const var& propertyValue) const
+    ValueTree getChildWithProperty (const Identifier& propertyName, const var& propertyValue, bool recursive = false) const
     {
         for (auto* s : children)
             if (s->properties[propertyName] == propertyValue)
                 return ValueTree (*s);
 
+                if (recursive)
+        {
+            for (auto* s : children)
+            {
+                auto v = s->getChildWithProperty(propertyName, propertyValue, true);
+                if (v.isValid())
+                    return v;
+            }
+        }
+
+        
         return {};
     }
 
@@ -892,9 +903,9 @@ ValueTree ValueTree::getOrCreateChildWithName (const Identifier& type, UndoManag
     return object != nullptr ? object->getOrCreateChildWithName (type, undoManager) : ValueTree();
 }
 
-ValueTree ValueTree::getChildWithProperty (const Identifier& propertyName, const var& propertyValue) const
+ValueTree ValueTree::getChildWithProperty (const Identifier& propertyName, const var& propertyValue, bool recursive) const
 {
-    return object != nullptr ? object->getChildWithProperty (propertyName, propertyValue) : ValueTree();
+    return object != nullptr ? object->getChildWithProperty (propertyName, propertyValue, recursive) : ValueTree();
 }
 
 bool ValueTree::isAChildOf (const ValueTree& possibleParent) const noexcept

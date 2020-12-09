@@ -311,7 +311,7 @@ public:
         If no such tree is found, it'll return an invalid object. (You can use isValid() to
         check whether a tree is valid)
     */
-    ValueTree getChildWithProperty (const Identifier& propertyName, const var& propertyValue) const;
+    ValueTree getChildWithProperty (const Identifier& propertyName, const var& propertyValue, bool recursive = false) const;
 
     /** Adds a child to this tree.
         Make sure that the child being added has first been removed from any former parent before
