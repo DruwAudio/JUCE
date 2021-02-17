@@ -575,10 +575,22 @@ int MidiMessage::getControllerNumber() const noexcept
     return getRawData()[1];
 }
 
+void MidiMessage::setControllerNumber (const int newControllerNumber) noexcept
+{
+    if (isController())
+        getData()[1] = (uint8) (newControllerNumber & 127);
+}
+
 int MidiMessage::getControllerValue() const noexcept
 {
     jassert (isController());
     return getRawData()[2];
+}
+
+void MidiMessage::setControllerValue (const int newControllerValue) noexcept
+{
+    if (isController())
+        getData()[2] = (uint8) (newControllerValue & 127);
 }
 
 MidiMessage MidiMessage::controllerEvent (const int channel, const int controllerType, const int value) noexcept
