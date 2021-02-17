@@ -477,7 +477,12 @@ public:
 
         @see isController, getControllerNumber
     */
+
+    void setControllerNumber (int newControllerNumber) noexcept;
+
     int getControllerValue() const noexcept;
+
+    void setControllerValue (int newControllerValue) noexcept;
 
     /** Returns true if this message is a controller message and if it has the specified
         controller type.
