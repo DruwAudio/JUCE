@@ -72,6 +72,9 @@ public:
     /** Resets the internal state variables of the processor. */
     void reset();
 
+    /** Sets the ramp duration. */
+    void setRampDurationSeconds(double newDurationSeconds) noexcept;
+
     //==============================================================================
     /** Processes the input and output samples supplied in the processing context. */
     template <typename ProcessContext>
@@ -116,6 +119,7 @@ private:
     SampleType pan = 0.0;
     SmoothedValue<SampleType> leftVolume, rightVolume;
     double sampleRate = 44100.0;
+    double rampDurationSeconds;
 };
 
 } // namespace dsp
