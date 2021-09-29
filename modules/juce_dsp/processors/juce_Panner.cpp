@@ -30,7 +30,7 @@ namespace dsp
 
 //==============================================================================
 template <typename SampleType>
-Panner<SampleType>::Panner()
+Panner<SampleType>::Panner() : rampDurationSeconds { 0.05 }
 {
     update();
     reset();
@@ -68,8 +68,18 @@ void Panner<SampleType>::prepare (const ProcessSpec& spec)
 template <typename SampleType>
 void Panner<SampleType>::reset()
 {
-    leftVolume .reset (sampleRate, 0.05);
-    rightVolume.reset (sampleRate, 0.05);
+    leftVolume .reset (sampleRate, rampDurationSeconds);
+    rightVolume.reset (sampleRate, rampDurationSeconds);
+}
+
+template <typename SampleType>
+void Panner<SampleType>::setRampDurationSeconds (double newDurationSeconds) noexcept
+{
+    if (rampDurationSeconds != newDurationSeconds)
+    {
+        rampDurationSeconds = newDurationSeconds;
+        reset();
+    }
 }
 
 //==============================================================================
