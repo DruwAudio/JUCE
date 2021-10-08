@@ -960,19 +960,16 @@ void ValueTree::moveChild (int currentIndex, int newIndex, UndoManager* undoMana
 //==============================================================================
 void ValueTree::createListOfChildren (OwnedArray<ValueTree>& list) const
 {
-    jassert (object != nullptr);
-
-    for (auto* o : object->children)
-    {
-        jassert (o != nullptr);
-        list.add (new ValueTree (*o));
-    }
+    if (object != nullptr)
+        for (auto* o : object->children)
+            if (o != nullptr)
+                list.add (new ValueTree (*o));
 }
 
 void ValueTree::reorderChildren (const OwnedArray<ValueTree>& newOrder, UndoManager* undoManager)
 {
-    jassert (object != nullptr);
-    object->reorderChildren (newOrder, undoManager);
+    if (object != nullptr)
+        object->reorderChildren (newOrder, undoManager);
 }
 
 //==============================================================================
@@ -1014,7 +1011,7 @@ ValueTree ValueTree::fromXml (const XmlElement& xml)
         ValueTree v (xml.getTagName());
         v.object->properties.setFromXmlAttributes (xml);
 
-        forEachXmlChildElement (xml, e)
+        for (auto* e : xml.getChildIterator())
             v.appendChild (fromXml (*e), nullptr);
 
         return v;
