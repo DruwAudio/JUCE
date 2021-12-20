@@ -20,6 +20,8 @@
   ==============================================================================
 */
 
+#include "../../../../tracy/Tracy.hpp"
+
 namespace juce
 {
 
@@ -815,6 +817,7 @@ void AudioDeviceManager::audioDeviceIOCallbackInt (const float** inputChannelDat
                                                    int numOutputChannels,
                                                    int numSamples)
 {
+    FrameMarkStart ("AudioCallback");
     const ScopedLock sl (audioCallbackLock);
 
     inputLevelGetter->updateLevel (inputChannelData, numInputChannels, numSamples);
@@ -866,6 +869,8 @@ void AudioDeviceManager::audioDeviceIOCallbackInt (const float** inputChannelDat
         if (testSoundPosition >= testSound->getNumSamples())
             testSound.reset();
     }
+
+    FrameMarkEnd ("AudioCallback");
 }
 
 void AudioDeviceManager::audioDeviceAboutToStartInt (AudioIODevice* const device)
