@@ -23,7 +23,7 @@
   ==============================================================================
 */
 
-#import <FBSDKCoreKit.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 namespace juce
 {
