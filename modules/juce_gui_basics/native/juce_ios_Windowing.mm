@@ -23,6 +23,8 @@
   ==============================================================================
 */
 
+#import <FBSDKCoreKit.h>
+
 namespace juce
 {
     extern bool isIOSAppActive;
@@ -50,6 +52,7 @@ namespace juce
 - (id) init;
 - (void) dealloc;
 - (void) applicationDidFinishLaunching: (UIApplication*) application;
+- (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(nullable NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions API_AVAILABLE(ios(3.0));
 - (void) applicationWillTerminate: (UIApplication*) application;
 - (void) applicationDidEnterBackground: (UIApplication*) application;
 - (void) applicationWillEnterForeground: (UIApplication*) application;
@@ -105,10 +108,27 @@ namespace juce
     [super dealloc];
 }
 
-- (void) applicationDidFinishLaunching: (UIApplication*) application
+- (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(nullable NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions
 {
+    [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
+
+    [FBSDKSettings enableLoggingBehavior:FBSDKLoggingBehaviorAppEvents];
+    [FBSDKSettings enableLoggingBehavior:FBSDKLoggingBehaviorNetworkRequests];
+    [FBSDKSettings enableLoggingBehavior:FBSDKLoggingBehaviorDeveloperErrors];
+    [FBSDKSettings enableLoggingBehavior:FBSDKLoggingBehaviorGraphAPIDebugInfo];
+    [FBSDKSettings enableLoggingBehavior:FBSDKLoggingBehaviorAccessTokens];
+    FBSDKSettings.autoLogAppEventsEnabled = true;
+    [FBSDKSettings setAdvertiserTrackingEnabled:true];
+    FBSDKSettings.AdvertiserIDCollectionEnabled = true;
+    
+    
+    
+    
+    
     ignoreUnused (application);
     initialiseJuce_GUI();
+
+    [FBSDKAppEvents logEvent:@"launchedApp"];
 
     if (auto* app = JUCEApplicationBase::createInstance())
     {
@@ -119,6 +139,39 @@ namespace juce
     {
         jassertfalse; // you must supply an application object for an iOS app!
     }
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
+
+    BOOL result = [[FBSDKApplicationDelegate sharedInstance] application:application
+                                                               openURL:url
+                                                     sourceApplication:sourceApplication
+                                                            annotation:annotation];
+    return result;
+}
+
+- (void) applicationDidFinishLaunching: (UIApplication*) application
+{
+    ignoreUnused (application);
+    initialiseJuce_GUI();
+
+    [FBSDKAppEvents logEvent:@"appLaunched"];
+
+    if (auto* app = JUCEApplicationBase::createInstance())
+    {
+        if (! app->initialiseApp())
+            exit (app->shutdownApp());
+    }
+    else
+    {
+        jassertfalse; // you must supply an application object for an iOS app!
+    }
+
+
 }
 
 - (void) applicationWillTerminate: (UIApplication*) application
