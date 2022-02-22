@@ -688,7 +688,7 @@ public:
                                         [this] (MemoryOutputStream& mo) { writeProjectFile (mo); });
 
         writeInfoPlistFiles();
-//        writeWorkspaceSettings();
+        writeWorkspaceSettings();
 
         // Deleting the .rsrc files can be needed to force Xcode to update the version number.
         deleteRsrcFiles (getTargetFolder().getChildFile ("build"));
@@ -3136,10 +3136,8 @@ private:
 
     String addCustomFramework (String frameworkPath) const
     {
-
-        if (! frameworkPath.endsWithIgnoreCase (".framework") && !frameworkPath.endsWithIgnoreCase(".xcframework"))
-        frameworkPath << ".framework";
-        
+        if (! frameworkPath.endsWithIgnoreCase (".framework"))
+            frameworkPath << ".framework";
 
         auto fileRefID = createFileRefID (frameworkPath);
 
