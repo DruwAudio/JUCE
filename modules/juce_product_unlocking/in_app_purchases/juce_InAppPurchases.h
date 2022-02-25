@@ -79,7 +79,7 @@ public:
         String applicationBundleName;
 
         /** Date of the purchase (in ISO8601 format). */
-        String purchaseTime;
+        Time purchaseTime;
 
         /** Android only: purchase token that should be used to consume purchase, provided that In-App product
             is consumable. */
