@@ -436,7 +436,7 @@ private:
         return { juceString (LocalRef<jstring> ((jstring) env->CallObjectMethod (purchase, AndroidPurchase.getOrderId))),
                  juceString (LocalRef<jstring> ((jstring) env->CallObjectMethod (purchase, AndroidPurchase.getSku))),
                  juceString (LocalRef<jstring> ((jstring) env->CallObjectMethod (purchase, AndroidPurchase.getPackageName))),
-                 Time (env->CallLongMethod (purchase, AndroidPurchase.getPurchaseTime)).toString (true, true, true, true),
+                 Time (env->CallLongMethod (purchase, AndroidPurchase.getPurchaseTime)),
                  juceString (LocalRef<jstring> ((jstring) env->CallObjectMethod (purchase, AndroidPurchase.getPurchaseToken))) };
     }
 
