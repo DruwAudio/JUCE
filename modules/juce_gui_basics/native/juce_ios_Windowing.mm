@@ -23,7 +23,9 @@
   ==============================================================================
 */
 
+#if ENABLE_TRACKING
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
+#endif
 
 namespace juce
 {
@@ -110,6 +112,7 @@ namespace juce
 
 - (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(nullable NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions
 {
+#if ENABLE_TRACKING
     [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
 
     [FBSDKSettings enableLoggingBehavior:FBSDKLoggingBehaviorAppEvents];
@@ -120,15 +123,14 @@ namespace juce
     FBSDKSettings.autoLogAppEventsEnabled = true;
     [FBSDKSettings setAdvertiserTrackingEnabled:true];
     FBSDKSettings.AdvertiserIDCollectionEnabled = true;
-    
-    
-    
-    
-    
+#endif
+
     ignoreUnused (application);
     initialiseJuce_GUI();
 
+#if ENABLE_TRACKING
     [FBSDKAppEvents logEvent:@"launchedApp"];
+#endif
 
     if (auto* app = JUCEApplicationBase::createInstance())
     {
@@ -146,12 +148,13 @@ namespace juce
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation {
-
+#if ENABLE_TRACKING
     BOOL result = [[FBSDKApplicationDelegate sharedInstance] application:application
                                                                openURL:url
                                                      sourceApplication:sourceApplication
                                                             annotation:annotation];
     return result;
+#endif
 }
 
 - (void) applicationDidFinishLaunching: (UIApplication*) application
@@ -159,7 +162,9 @@ namespace juce
     ignoreUnused (application);
     initialiseJuce_GUI();
 
+#if ENABLE_TRACKING
     [FBSDKAppEvents logEvent:@"appLaunched"];
+#endif
 
     if (auto* app = JUCEApplicationBase::createInstance())
     {
