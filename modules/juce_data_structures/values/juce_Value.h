@@ -89,8 +89,10 @@ public:
 
         If there are any listeners registered, they will be notified of the
         change asynchronously.
+
+        The optional forceChangeMessage arg is from the Beatsurfing fork.
     */
-    void setValue (const var& newValue);
+    void setValue (const var& newValue, bool forceChangeMessage = false);
 
     /** Sets the current value.
 
