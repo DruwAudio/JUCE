@@ -158,9 +158,11 @@ Value::operator var() const
     return value->getValue();
 }
 
-void Value::setValue (const var& newValue)
+void Value::setValue (const var& newValue, bool forceChangeMessage)
 {
     value->setValue (newValue);
+    if (forceChangeMessage)
+        value->sendChangeMessage(true);
 }
 
 String Value::toString() const
