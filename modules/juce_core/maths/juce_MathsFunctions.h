@@ -387,6 +387,9 @@ struct MathConstants
     /** A predefined value for Pi / 2 */
     static constexpr FloatType halfPi = static_cast<FloatType> (3.141592653589793238L / 2);
 
+    /** A predefined value for 1 / Pi */
+    static constexpr FloatType invPi = static_cast<FloatType> (0.318309886183790671537767526745028724L);
+
     /** A predefined value for Euler's number */
     static constexpr FloatType euler = static_cast<FloatType> (2.71828182845904523536L);
 
