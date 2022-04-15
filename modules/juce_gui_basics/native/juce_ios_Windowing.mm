@@ -25,7 +25,7 @@
 
 #if ENABLE_TRACKING
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
-#import <FIRInAppMessaging.h>
+//#import <FIRInAppMessaging.h>
 #endif
 
 namespace juce
@@ -134,7 +134,7 @@ namespace juce
 #endif
     
 #if ENABLE_TRACKING
-    [[FIRInAppMessaging inAppMessaging] triggerEvent:@"exampleTrigger"];
+//    [[FIRInAppMessaging inAppMessaging] triggerEvent:@"exampleTrigger"];
 #endif
 
     if (auto* app = JUCEApplicationBase::createInstance())
