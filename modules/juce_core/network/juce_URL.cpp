@@ -452,6 +452,97 @@ URL URL::getChildURL (const String& subPath) const
     return u;
 }
 
+#if JUCE_IOS
+URL toJuceUrl(NSURL* url) {
+    [url startAccessingSecurityScopedResource];
+
+    NSError* error = nil;
+
+    auto* bookmark = [url bookmarkDataWithOptions: 0
+                   includingResourceValuesForKeys: nil
+                                    relativeToURL: nil
+                                            error: &error];
+
+    [bookmark retain];
+
+    [url stopAccessingSecurityScopedResource];
+
+    URL juceUrl (nsStringToJuce ([url absoluteString]));
+
+    if (error == nil)
+    {
+        setURLBookmark (juceUrl, (void*) bookmark);
+    }
+    else
+    {
+        auto desc = [error localizedDescription];
+        ignoreUnused (desc);
+        jassertfalse;
+    }
+
+    return juceUrl;
+}
+#endif
+
+Array<URL> URL::findChildURLs (int whatToLookFor,
+                               bool searchRecursively,
+                               const String& wildCardPatternStr) const
+{
+#if JUCE_IOS
+    if (NSData* bookmark = (NSData*) getURLBookmark (const_cast<URL&> (*this)))
+    {
+        BOOL isBookmarkStale = false;
+        NSError* error = nil;
+
+        auto nsURL = [NSURL URLByResolvingBookmarkData: bookmark
+                                               options: 0
+                                         relativeToURL: nil
+                                   bookmarkDataIsStale: &isBookmarkStale
+                                                  error: &error];
+
+        if (error == nil)
+        {
+            NSDirectoryEnumerationOptions opt = NSDirectoryEnumerationSkipsPackageDescendants;
+            if (whatToLookFor & File::ignoreHiddenFiles) {
+                opt |= NSDirectoryEnumerationSkipsHiddenFiles;
+            }
+            if (!searchRecursively) {
+                opt |= NSDirectoryEnumerationSkipsSubdirectoryDescendants;
+            }
+            NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager]
+                                                 enumeratorAtURL:nsURL
+                                                 includingPropertiesForKeys:@[ NSURLIsDirectoryKey ]
+                                                 options: opt
+                                                 errorHandler:^(NSURL *url, NSError *error) {
+                                                     // Handle the error.
+                                                     // Return YES if the enumeration should continue after the error.
+                                                     return YES;
+                                                 }];
+
+            auto wildCardPattern = DirectoryIterator::parseWildcards (wildCardPatternStr);
+            Array<URL> result;
+            for (NSURL *url in enumerator) {
+                NSNumber *isDirectory = nil;
+                [url getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:nil];
+                if ((whatToLookFor & File::findDirectories) && [isDirectory boolValue]) {
+                    result.add (toJuceUrl (url));
+                } else if ((whatToLookFor & File::findFiles) && ![isDirectory boolValue]) {
+                   auto urlString = nsStringToJuce ([url absoluteString]);
+                   if (DirectoryIterator::fileMatches (wildCardPattern, urlString)) {
+                       result.add (toJuceUrl (url));
+                   }
+               }
+            }
+
+            return result;
+        }
+    }
+    return {};
+#else
+    return {};
+#endif
+}
+
 bool URL::hasBodyDataToSend() const
 {
     return filesToUpload.size() > 0 || ! postData.isEmpty();

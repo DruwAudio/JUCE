@@ -178,6 +178,26 @@ public:
     */
     URL getChildURL (const String& subPath) const;
 
+    /** Searches this directory for urls matching a wildcard pattern.
+
+        Assuming that this url is a directory, this method will search it
+        for either files or subdirectories whose names match a filename pattern.
+        Note that the order in which urls are returned is completely undefined!
+
+        @param whatToLookFor            a value from the TypesOfFileToFind enum, specifying whether to
+                                        return files, directories, or both. If the ignoreHiddenFiles flag
+                                        is also added to this value, hidden files won't be returned
+        @param searchRecursively        if true, all subdirectories will be recursed into to do
+                                        an exhaustive search
+        @param wildCardPattern          the filename pattern to search for, e.g. "*.txt"
+        @returns                        the set of urls that were found
+
+        @see getNumberOfChildURLs, RangedDirectoryIterator
+    */
+    Array<URL> findChildURLs (int whatToLookFor,
+                              bool searchRecursively,
+                              const String& wildCardPattern = "*") const;
+
     //==============================================================================
     /** Returns a copy of this URL, with a GET or POST parameter added to the end.
 

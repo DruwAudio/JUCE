@@ -116,6 +116,9 @@ public:
     */
     float getEstimatedProgress() const;
 
+    static StringArray parseWildcards (const String& pattern);
+    static bool fileMatches (const StringArray& wildCards, const String& filename);
+
 private:
     //==============================================================================
     struct NativeIterator
@@ -143,9 +146,6 @@ private:
     bool hasBeenAdvanced = false;
     std::unique_ptr<DirectoryIterator> subIterator;
     File currentFile;
-
-    static StringArray parseWildcards (const String& pattern);
-    static bool fileMatches (const StringArray& wildCards, const String& filename);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DirectoryIterator)
 };
