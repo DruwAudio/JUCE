@@ -694,6 +694,9 @@ private:
 
         for (auto rate : currentDevice->getAvailableSampleRates())
         {
+            if (rate < 44100)
+                break;
+
             auto intRate = roundToInt (rate);
             sampleRateDropDown->addItem (String (intRate) + " Hz", intRate);
         }
