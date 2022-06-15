@@ -694,11 +694,13 @@ private:
 
         for (auto rate : currentDevice->getAvailableSampleRates())
         {
-            if (rate < 44100)
-                break;
 
-            auto intRate = roundToInt (rate);
-            sampleRateDropDown->addItem (String (intRate) + " Hz", intRate);
+            // only allow rates starting at 44100, to avoid problems in gen-based filters from Pascal
+            if (rate > 44000)
+            {
+                auto intRate = roundToInt (rate);
+                sampleRateDropDown->addItem (String (intRate) + " Hz", intRate);
+            }
         }
 
         sampleRateDropDown->setSelectedId (roundToInt (currentDevice->getCurrentSampleRate()), dontSendNotification);
