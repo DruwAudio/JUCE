@@ -430,6 +430,8 @@ struct InAppPurchases::Pimpl   : public SKDelegateAndPaymentObserver
         auto packageName  = nsStringToJuce ([[NSBundle mainBundle] bundleIdentifier]);
         auto productId    = nsStringToJuce (transaction.payment.productIdentifier);
         auto purchaseTime = Time (1000 * (int64) transaction.transactionDate.timeIntervalSince1970);
+        if (transaction.originalTransaction != nullptr)
+            purchaseTime = Time (1000 * (int64) transaction.originalTransaction.transactionDate.timeIntervalSince1970);
 
         Purchase purchase { orderId, productId, packageName, purchaseTime, {} };
 
