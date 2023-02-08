@@ -728,8 +728,11 @@ private:
         if (currentRate == 0)
             currentRate = 48000.0;
 
-        for (auto bs : currentDevice->getAvailableBufferSizes())
-            bufferSizeDropDown->addItem (String (bs) + " samples (" + String (bs * 1000.0 / currentRate, 1) + " ms)", bs);
+        for (auto bs : currentDevice->getAvailableBufferSizes()){
+            // don't allow user to select buffer sizes that are too large
+            if (bs <= 512 )
+                bufferSizeDropDown->addItem (String (bs) + " samples (" + String (bs * 1000.0 / currentRate, 1) + " ms)", bs);
+        }
 
         bufferSizeDropDown->setSelectedId (currentDevice->getCurrentBufferSizeSamples(), dontSendNotification);
         bufferSizeDropDown->onChange = [this] { updateConfig (false, false, false, true); };

@@ -1311,7 +1311,7 @@ struct iOSAudioIODevice::Pimpl      : public AudioPlayHead,
    #if TARGET_IPHONE_SIMULATOR
     static constexpr int defaultBufferSize = 512;
    #else
-    static constexpr int defaultBufferSize = 256;
+    static constexpr int defaultBufferSize = 128;
    #endif
     int targetBufferSize = defaultBufferSize, bufferSize = targetBufferSize;
 
