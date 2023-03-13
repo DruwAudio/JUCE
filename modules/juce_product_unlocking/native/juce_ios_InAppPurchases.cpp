@@ -616,6 +616,12 @@ struct InAppPurchases::Pimpl   : public SKDelegateAndPaymentObserver
                             {
                                 if (auto productId = getAs<NSString> (purchaseData[nsStringLiteral ("product_id")]))
                                 {
+                                    auto expirationTime = getPurchaseDateMs (purchaseData[nsStringLiteral ("expires_date_ms")]);
+                                    if (expirationTime > 0 && expirationTime < Time::currentTimeMillis())
+                                    {
+                                        continue;
+                                    }
+
                                     auto purchaseTime = getPurchaseDateMs (purchaseData[nsStringLiteral ("purchase_date_ms")]);
 
                                     if (purchaseTime > 0)
