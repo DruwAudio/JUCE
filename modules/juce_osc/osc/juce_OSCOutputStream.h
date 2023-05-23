@@ -77,6 +77,11 @@ struct JUCE_API OSCOutputStream
     //==============================================================================
     bool writeBundleElement (const OSCBundle::Element& element);
 
+    juce::MemoryBlock  getOutput() const noexcept
+    {
+        return output.getMemoryBlock();
+    }
+
 private:
     MemoryOutputStream output;
 
