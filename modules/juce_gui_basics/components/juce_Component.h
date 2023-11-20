@@ -1021,7 +1021,7 @@ public:
 
         @see paint
     */
-    void repaint();
+    virtual void repaint();
 
     /** Marks a subsection of this component as needing to be redrawn.
 
