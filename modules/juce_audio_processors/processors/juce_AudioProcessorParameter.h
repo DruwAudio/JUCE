@@ -349,6 +349,8 @@ public:
     /** @internal */
     void sendValueChangedMessageToListeners (float newValue);
 
+    void setVersion (int newVersion) noexcept             { version = newVersion; }
+
 private:
     //==============================================================================
     friend class AudioProcessor;
