@@ -887,7 +887,11 @@ private:
                             auto stream = becomeComSmartPtrOwner (SHCreateMemStream ((BYTE*) responseData->data.data(),
                                                                                      (UINT) responseData->data.size()));
 
-                            StringArray headers { "Content-Type: " + responseData->mimeType };
+                            // No validators (ETag/Last-Modified) are sent for resource-provider
+                            // responses, so the default cache policy can keep serving stale bytes
+                            // for an unchanged URL (e.g. a live-edited stylesheet) across reloads.
+                            StringArray headers { "Content-Type: " + responseData->mimeType,
+                                                  "Cache-Control: no-store" };
 
                             if (const auto allowedOrigin = owner.impl->options.getAllowedOrigin())
                                 headers.add ("Access-Control-Allow-Origin: " + *allowedOrigin);

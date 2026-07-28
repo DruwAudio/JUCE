@@ -532,6 +532,13 @@ struct WebViewDelegateClass final : public ObjCClass<NSObject>
                                NSMutableDictionary* headers = [@ {
                                    @"Content-Length" : juceStringToNS (String { resource->data.size() }),
                                    @"Content-Type" : juceStringToNS (resource->mimeType),
+                                   // Resource-provider responses have no validators (no ETag/
+                                   // Last-Modified), so WKWebView's default protocol cache policy
+                                   // caches them indefinitely per URL — a reloaded page can keep
+                                   // showing stale bytes for an unchanged URL (e.g. a live-edited
+                                   // stylesheet) until the WKWebView itself is recreated. Callers
+                                   // that want caching can still do so at the app level.
+                                   @"Cache-Control" : @"no-store",
                                } mutableCopy];
 
                                if (auto allowedOrigin = connector->getOptions().getAllowedOrigin())
