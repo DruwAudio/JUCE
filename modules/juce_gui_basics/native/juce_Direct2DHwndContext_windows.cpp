@@ -35,6 +35,27 @@
 namespace juce
 {
 
+//==============================================================================
+// DruwAudio: text on a window follows the system's font smoothing -- ClearType
+// when it is on (Windows' default), as every Windows app and browser draws it;
+// grayscale when the user turned it off. JUCE draws grayscale everywhere
+// (Direct2DDeviceContext::create), which reads soft and thin next to a browser
+// at small sizes: ClearType's subpixels give about three times the horizontal
+// detail. Only a window's own surface gets it -- images, drag images and
+// layered windows keep grayscale, since ClearType over transparent pixels
+// fringes. The rendering parameters stay the device context's defaults, which
+// are the user's (ClearType Tuner, the monitor's subpixel order).
+static void applySystemTextSmoothing (ID2D1DeviceContext1& context)
+{
+    BOOL smoothing = FALSE;
+    UINT type = 0;
+    SystemParametersInfoW (SPI_GETFONTSMOOTHING, 0, &smoothing, 0);
+    SystemParametersInfoW (SPI_GETFONTSMOOTHINGTYPE, 0, &type, 0);
+
+    context.SetTextAntialiasMode (smoothing && type == FE_FONTSMOOTHINGCLEARTYPE ? D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE
+                                                                                 : D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
+}
+
 class WindowsScopedEvent
 {
 public:
@@ -420,7 +441,12 @@ private:
             return false;
 
         if (deviceContext == nullptr)
+        {
             deviceContext = Direct2DDeviceContext::create (adapter);
+
+            if (deviceContext != nullptr)
+                applySystemTextSmoothing (*deviceContext); // DruwAudio: see above
+        }
 
         if (deviceContext == nullptr)
             return false;
