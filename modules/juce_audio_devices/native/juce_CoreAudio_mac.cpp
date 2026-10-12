@@ -1061,6 +1061,12 @@ private:
     template <typename Iterator>
     struct StrideIterator
     {
+        using difference_type   = ptrdiff_t;
+        using value_type        = std::remove_cv_t<std::remove_reference_t<decltype (*std::declval<Iterator>())>>;
+        using reference         = decltype (*std::declval<Iterator>());
+        using pointer           = void;
+        using iterator_category = std::forward_iterator_tag;
+
         StrideIterator (Iterator iteratorIn, ptrdiff_t strideIn)
             : iterator (std::move (iteratorIn)), stride (strideIn) {}
 
