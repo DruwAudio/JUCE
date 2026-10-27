@@ -52,6 +52,11 @@ public:
         placeholderComponent.reset (new PlaceholderComponent (*this));
         createNativeWindow (component);
 
+        // The pixel format and the context in the window's own DPI awareness (DRUW fix), as the
+        // window itself was made: from a thread that isn't per-monitor aware -- a plugin host's
+        // message thread, often -- the driver can be shown the window's size in logical pixels.
+        ScopedThreadDPIAwarenessSetter dpiAwareness { (HWND) nativeWindow->getNativeHandle() };
+
         PIXELFORMATDESCRIPTOR pfd;
         initialisePixelFormatDescriptor (pfd, pixelFormat);
 
@@ -166,6 +171,12 @@ public:
             if (! approximatelyEqual (nativeScaleFactor, 1.0))
                 bounds = (bounds.toDouble() * nativeScaleFactor).toNearestInt();
 
+            // In the window's own DPI awareness (DRUW fix): from a thread that isn't per-monitor
+            // aware -- a plugin host's message thread, often -- Windows takes these physical
+            // coordinates for unscaled ones and scales them by the display's DPI again: the GL
+            // window came out e.g. 1.25x too big at 125 %.
+            ScopedThreadDPIAwarenessSetter dpiAwareness { (HWND) nativeWindow->getNativeHandle() };
+
             SetWindowPos ((HWND) nativeWindow->getNativeHandle(), nullptr,
                           bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(),
                           SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOOWNERZORDER);
@@ -200,6 +211,11 @@ private:
     //==============================================================================
     void handleAsyncUpdate() override
     {
+        // In the window's own DPI awareness (DRUW fix): shown from a thread that isn't per-monitor
+        // aware -- a plugin host's message thread, often -- the driver could re-size its
+        // framebuffer to the window's size in logical pixels, then stretched over the window by
+        // the display's scale: a zoomed frame, cropped at the top and right, until a resize.
+        ScopedThreadDPIAwarenessSetter dpiAwareness { (HWND) nativeWindow->getNativeHandle() };
         nativeWindow->setVisible (true);
     }
 
