@@ -234,17 +234,21 @@ public:
         }
     }
 
+    // DRUW: with component painting off, a child's repaint draws nothing into the frame, so it
+    // asks for none -- else every repaint renders a frame at once, past the host's own frame rate.
     bool invalidateAll() override
     {
         validArea.clear();
-        triggerRepaint();
+        if (context.renderComponents)
+            triggerRepaint();
         return false;
     }
 
     bool invalidate (const Rectangle<int>& area) override
     {
         validArea.subtract (area.toFloat().transformedBy (transform).getSmallestIntegerContainer());
-        triggerRepaint();
+        if (context.renderComponents)
+            triggerRepaint();
         return false;
     }
 
